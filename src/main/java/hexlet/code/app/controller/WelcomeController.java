@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class WelcomeController {
-
     @GetMapping(path = "/welcome")
     @ResponseStatus(HttpStatus.OK)
     public String index() {
