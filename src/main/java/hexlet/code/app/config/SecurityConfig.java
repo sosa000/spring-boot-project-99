@@ -45,14 +45,13 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/").permitAll()
-                        .requestMatchers("/static/**", "/assets/**", "/favicon.ico").permitAll()
+                        .requestMatchers("/static/**", "/assets/**").permitAll()
                         .requestMatchers("/index.html").permitAll()
-                        .requestMatchers("/favicon.ico").permitAll()
                         .requestMatchers("/api/login").permitAll()
                         .requestMatchers("/api/register").permitAll()
                         .anyRequest().authenticated())
