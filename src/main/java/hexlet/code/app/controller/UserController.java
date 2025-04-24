@@ -1,5 +1,6 @@
 package hexlet.code.app.controller;
 
+import hexlet.code.app.dto.user.UserCreateDTO;
 import hexlet.code.app.dto.user.UserDTO;
 import hexlet.code.app.dto.user.UserUpdateDTO;
 import hexlet.code.app.sevice.UserService;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,6 +39,15 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<UserDTO> show(@PathVariable Long id) {
         var user = userService.findById(id);
+        return ResponseEntity.ok()
+                .body(user);
+    }
+
+    @PostMapping(path = "/users")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<UserDTO> create(@Valid @RequestBody UserCreateDTO dto) {
+        var user = userService.create(dto);
+
         return ResponseEntity.ok()
                 .body(user);
     }
