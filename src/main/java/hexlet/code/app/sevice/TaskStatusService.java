@@ -7,7 +7,9 @@ import hexlet.code.app.exception.ResourceNotFoundException;
 import hexlet.code.app.mapper.taskstatus.TaskStatusMapper;
 import hexlet.code.app.repository.TaskStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -48,6 +50,13 @@ public class TaskStatusService {
     }
 
     public void destroy(Long id) {
+//        var model = taskStatusRepository.findById(id)
+//                .orElseThrow(() -> new ResourceNotFoundException("Task status with id " + id + " not found"));
+//
+//        if (!model.getTasks().isEmpty()) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot delete task status with tasks");
+//        }
+
         taskStatusRepository.deleteById(id);
     }
 }

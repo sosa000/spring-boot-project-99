@@ -1,53 +1,44 @@
 package hexlet.code.app.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-@Table(name = "task_status")
+@Table(name = "tasks")
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
-public class TaskStatus implements BaseEntity {
+public class Task implements BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-//
-//    @OneToMany(mappedBy = "taskStatus")
-//    @OnDelete(action = OnDeleteAction.NO_ACTION)
-//    private List<Task> tasks = new ArrayList<>();
-//
-//    public void addTask(Task task) {
-//        tasks.add(task);
-//        task.setTaskStatus(this);
-//    }
-//
-//    public void removeTask(Task task) {
-//        tasks.remove(task);
-//        task.setTaskStatus(null);
-//    }
 
     @NotNull
-    @Column(unique = true)
+    @NotBlank
     @Size(min = 1)
     private String name;
 
+    private Long index;
+
+    private String description;
+
     @NotNull
-    @Column(unique = true)
-    @Size(min = 1)
-    private String slug;
+    @ManyToOne
+    @JoinColumn(name = "task_status_id")
+    private TaskStatus taskStatus;
+
+    @ManyToOne
+    @JoinColumn(name = "assignee_id")
+    private User assignee;
 
     @CreatedDate
     private LocalDate createdAt;

@@ -7,8 +7,10 @@ import hexlet.code.app.exception.ResourceNotFoundException;
 import hexlet.code.app.mapper.user.UserMapper;
 import hexlet.code.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -58,6 +60,13 @@ public class UserService {
     }
 
     public void destroy(Long id) {
+//        var model = userRepository.findById(id)
+//                        .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
+//
+//        if (!model.getTasks().isEmpty()) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot delete user with tasks");
+//        }
+
         userRepository.deleteById(id);
     }
 }
