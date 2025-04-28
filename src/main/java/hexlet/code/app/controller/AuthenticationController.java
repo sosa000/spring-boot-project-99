@@ -34,18 +34,18 @@ public class AuthenticationController {
         return token;
     }
 
-    @PostMapping(path = "/register")
-    @ResponseStatus(HttpStatus.CREATED)
-    public String register(@Valid @RequestBody UserCreateDTO dto) {
-        var user = userService.create(dto);
-        var authentication = new UsernamePasswordAuthenticationToken(
-                dto.getEmail(),
-                dto.getPassword());
-
-        authenticationManager.authenticate(authentication);
-
-        var token = jwtUtils.generateToken(user.getEmail());
-
-        return token;
-    }
+//    @PostMapping(path = "/register")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public String register(@Valid @RequestBody UserCreateDTO dto) {
+//        var user = userService.create(dto);
+//        var authentication = new UsernamePasswordAuthenticationToken(
+//                dto.getEmail(),
+//                dto.getPassword());
+//
+//        authenticationManager.authenticate(authentication);
+//
+//        var token = jwtUtils.generateToken(user.getEmail());
+//
+//        return token;
+//    }
 }

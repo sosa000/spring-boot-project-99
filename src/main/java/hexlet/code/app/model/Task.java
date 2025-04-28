@@ -45,7 +45,6 @@ public class Task implements BaseEntity {
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TaskLabel> taskLabels = new ArrayList<>();
 
-
     @CreatedDate
     private LocalDate createdAt;
 

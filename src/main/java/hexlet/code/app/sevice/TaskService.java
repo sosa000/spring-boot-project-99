@@ -2,6 +2,7 @@ package hexlet.code.app.sevice;
 
 import hexlet.code.app.dto.task.TaskCreateDTO;
 import hexlet.code.app.dto.task.TaskDTO;
+import hexlet.code.app.dto.task.TaskParamsDTO;
 import hexlet.code.app.dto.task.TaskUpdateDTO;
 import hexlet.code.app.exception.ResourceNotFoundException;
 import hexlet.code.app.mapper.task.TaskMapper;
@@ -11,7 +12,9 @@ import hexlet.code.app.repository.LabelRepository;
 import hexlet.code.app.repository.TaskRepository;
 import hexlet.code.app.repository.TaskStatusRepository;
 import hexlet.code.app.repository.UserRepository;
+import hexlet.code.app.specification.TaskSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,6 +39,9 @@ public class TaskService {
     @Autowired
     private LabelRepository labelRepository;
 
+    @Autowired
+    private TaskSpecification taskSpecification;
+
     private List<TaskLabel> createTaskLabels(List<Long> labelsIds, Task task) {
         if (labelsIds == null || labelsIds.isEmpty()) {
             return List.of();
@@ -54,8 +60,9 @@ public class TaskService {
                 .toList();
     }
 
-    public List<TaskDTO> findAll() {
-        return taskRepository.findAll()
+    public List<TaskDTO> findAll(TaskParamsDTO params, int page) {
+        var spec = taskSpecification.build(params);
+        return taskRepository.findAll(spec, PageRequest.of(page - 1, 10))
                 .stream()
                 .map(taskMapper::map)
                 .toList();
