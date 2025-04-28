@@ -6,11 +6,11 @@ import hexlet.code.app.dto.user.UserUpdateDTO;
 import hexlet.code.app.sevice.UserService;
 import hexlet.code.app.util.UserUtils;
 import jakarta.validation.Valid;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,9 +54,9 @@ public class UserController {
 
     @PutMapping(path = "/users/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<UserDTO> update(@Valid @RequestBody UserUpdateDTO dto, @PathVariable Long id) {
+    public ResponseEntity<UserDTO> update(@Valid @RequestBody UserUpdateDTO dto, @PathVariable Long id) throws BadRequestException {
         if (!userUtils.getCurrentUser().getId().equals(id)) {
-            throw new AccessDeniedException("You can only edit your own profile");
+            throw new BadRequestException("You can only edit your own profile");
         }
 
         var user = userService.update(dto, id);
@@ -67,9 +67,9 @@ public class UserController {
 
     @DeleteMapping(path = "/users/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void destroy(@PathVariable Long id) {
+    public void destroy(@PathVariable Long id) throws BadRequestException {
         if (!userUtils.getCurrentUser().getId().equals(id)) {
-            throw new AccessDeniedException("You can only edit your own profile");
+            throw new BadRequestException("You can not delete another users");
         }
 
         userService.destroy(id);

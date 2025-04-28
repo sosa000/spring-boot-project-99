@@ -5,12 +5,12 @@ import hexlet.code.app.dto.user.UserDTO;
 import hexlet.code.app.dto.user.UserUpdateDTO;
 import hexlet.code.app.exception.ResourceNotFoundException;
 import hexlet.code.app.mapper.user.UserMapper;
+import hexlet.code.app.repository.TaskRepository;
 import hexlet.code.app.repository.UserRepository;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -25,6 +25,9 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private TaskRepository taskRepository;
 
     public List<UserDTO> findAll() {
         return userRepository.findAll()
@@ -59,14 +62,10 @@ public class UserService {
         return userMapper.map(model);
     }
 
-    public void destroy(Long id) {
-//        var model = userRepository.findById(id)
-//                        .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
-//
-//        if (!model.getTasks().isEmpty()) {
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot delete user with tasks");
-//        }
-
+    public void destroy(Long id) throws BadRequestException {
+        if (taskRepository.existsByAssignee_Id(id)) {
+            throw new BadRequestException("You can not delete user with task");
+        }
         userRepository.deleteById(id);
     }
 }

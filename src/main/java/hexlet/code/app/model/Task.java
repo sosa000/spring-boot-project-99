@@ -11,6 +11,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "tasks")
@@ -39,6 +41,10 @@ public class Task implements BaseEntity {
     @ManyToOne
     @JoinColumn(name = "assignee_id")
     private User assignee;
+
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TaskLabel> taskLabels = new ArrayList<>();
+
 
     @CreatedDate
     private LocalDate createdAt;

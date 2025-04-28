@@ -5,6 +5,7 @@ import hexlet.code.app.dto.taskstatus.TaskStatusDTO;
 import hexlet.code.app.dto.taskstatus.TaskStatusUpdateDTO;
 import hexlet.code.app.sevice.TaskStatusService;
 import jakarta.validation.Valid;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,7 +59,7 @@ public class TaskStatusController {
 
     @DeleteMapping(path = "/task_statuses/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void destroy(@PathVariable Long id) {
+    public void destroy(@PathVariable Long id) throws BadRequestException {
         taskStatusService.destroy(id);
     }
 }

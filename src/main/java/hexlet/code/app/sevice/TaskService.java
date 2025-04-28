@@ -5,6 +5,9 @@ import hexlet.code.app.dto.task.TaskDTO;
 import hexlet.code.app.dto.task.TaskUpdateDTO;
 import hexlet.code.app.exception.ResourceNotFoundException;
 import hexlet.code.app.mapper.task.TaskMapper;
+import hexlet.code.app.model.Task;
+import hexlet.code.app.model.TaskLabel;
+import hexlet.code.app.repository.LabelRepository;
 import hexlet.code.app.repository.TaskRepository;
 import hexlet.code.app.repository.TaskStatusRepository;
 import hexlet.code.app.repository.UserRepository;
@@ -30,6 +33,27 @@ public class TaskService {
     @Autowired
     private TaskStatusRepository taskStatusRepository;
 
+    @Autowired
+    private LabelRepository labelRepository;
+
+    private List<TaskLabel> createTaskLabels(List<Long> labelsIds, Task task) {
+        if (labelsIds == null || labelsIds.isEmpty()) {
+            return List.of();
+        }
+
+        return labelsIds.stream()
+                .map(id -> {
+                    var label = labelRepository.findById(id)
+                            .orElseThrow(() -> new ResourceNotFoundException("Label with id " + id + " not found"));
+                    TaskLabel taskLabel = new TaskLabel();
+                    taskLabel.setLabel(label);
+                    taskLabel.setTask(task);
+
+                    return taskLabel;
+                })
+                .toList();
+    }
+
     public List<TaskDTO> findAll() {
         return taskRepository.findAll()
                 .stream()
@@ -52,14 +76,20 @@ public class TaskService {
             var user = userRepository.findById(userId)
                     .orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " not found"));
             model.setAssignee(user);
+        } else {
+            model.setAssignee(null);
         }
 
         var status = taskStatusRepository.findBySlug(dto.getStatus())
                 .orElseThrow(() -> new ResourceNotFoundException("Task status with slug " + dto.getStatus() + " not found"));
-
         model.setTaskStatus(status);
 
+        var taskLabels = createTaskLabels(dto.getTaskLabelIds(), model);
+
+        model.setTaskLabels(taskLabels);
+
         taskRepository.save(model);
+
         return taskMapper.map(model);
     }
 
@@ -79,6 +109,12 @@ public class TaskService {
             var taskStatus = taskStatusRepository.findBySlug(statusSlug)
                     .orElseThrow(() -> new ResourceNotFoundException("Task status with slug " + statusSlug + " not found"));
             model.setTaskStatus(taskStatus);
+        });
+
+        setIfPresent(dto.getTaskLabelIds(), labelIds -> {
+            var taskLabels = createTaskLabels(labelIds, model);
+            model.getTaskLabels().clear();
+            model.getTaskLabels().addAll(taskLabels);
         });
 
         taskRepository.save(model);
