@@ -14,6 +14,7 @@ import hexlet.code.app.repository.TaskStatusRepository;
 import hexlet.code.app.repository.UserRepository;
 import hexlet.code.app.specification.TaskSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -63,8 +64,8 @@ public class TaskService {
     public List<TaskDTO> findAll(TaskParamsDTO params, int page) {
         var spec = taskSpecification.build(params);
         return taskRepository.findAll(spec, PageRequest.of(page - 1, 10))
-                .stream()
                 .map(taskMapper::map)
+                .stream()
                 .toList();
     }
 
